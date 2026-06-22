@@ -4,151 +4,191 @@
 
 ---
 
-## 🛠️ Stack Tecnológico
+## 📋 Tabla de Contenidos
 
-| Capa | Tecnología |
-|---|---|
-| Metodología | SCRUM (iterativo e incremental) |
-| Arquitectura | MVC (Modelo - Vista - Controlador) |
-| Backend | Laravel 11 (PHP 8.2+) |
-| Frontend | Tailwind CSS + Livewire + Laravel Jetstream |
-| Base de Datos | Oracle Database 19c |
-| Driver de Conexión | Oracle Instant Client 19 (x64) + OCI8 / PDO_OCI |
-| ORM / Paquete Oracle | `yajra/laravel-oci8` |
+- [Stack Tecnológico](#-stack-tecnológico)
+- [Arquitectura del Proyecto](#-arquitectura-del-proyecto)
+- [Módulos del Sistema](#-módulos-del-sistema)
+- [Base de Datos - Oracle 19c](#-base-de-datos--oracle-19c)
+- [Configuración del Entorno de Servidor](#-configuración-del-entorno-de-servidor-xampp--php--oracle)
+- [Configuración de Conexión en Laravel](#-configuración-de-conexión-en-laravel)
+- [Guía de Instalación y Despliegue](#-guía-de-instalación-y-despliegue)
+- [Autenticación y Componentes Reactivos](#-autenticación-y-componentes-reactivos)
+- [Requisitos del Sistema](#-requisitos-del-sistema)
+- [Solución de Problemas Comunes](#-solución-de-problemas-comunes)
+- [Licencia](#-licencia)
 
 ---
 
-## 📂 Estructura del Proyecto
+## 🛠️ Stack Tecnológico
+
+| Capa | Tecnología | Versión |
+|------|------------|---------|
+| **Metodología** | SCRUM | Iterativo e Incremental |
+| **Arquitectura** | MVC | Modelo - Vista - Controlador |
+| **Backend** | Laravel | 11.x (PHP 8.2+) |
+| **Frontend** | Tailwind CSS + Livewire + Laravel Jetstream | 3.x + 3.x |
+| **Base de Datos** | Oracle Database | 19c Enterprise Edition |
+| **Driver de Conexión** | Oracle Instant Client + OCI8 / PDO_OCI | 19 (x64) |
+| **ORM / Paquete Oracle** | Yajra Laravel OCI8 | ^11.0 |
+
+---
+
+## 📂 Arquitectura del Proyecto
+
+```text
 lalysdent/
-
+│
 ├── app/
-
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Auth/              # Controladores de autenticación
+│   │   │   ├── DashboardController.php
+│   │   │   └── ProfileController.php
+│   │   └── Livewire/              # Componentes reactivos
+│   │       ├── Citas/
+│   │       ├── Inventario/
+│   │       ├── Odontograma/
+│   │       ├── Pagos/
+│   │       └── Pacientes/
+│   │
 │   ├── Models/
-
-│   │   ├── User.php
-
+│   │   ├── User.php                # Modelo base de Jetstream
 │   │   ├── Asistente.php
-
 │   │   ├── Folder.php
-
 │   │   ├── Tratamiento.php
-
 │   │   ├── Doctor.php
-
 │   │   ├── Proveedor.php
-
 │   │   ├── Suministro.php
-
 │   │   ├── Paciente.php
-
 │   │   ├── Cita.php
-
 │   │   ├── Odontograma.php
-
 │   │   ├── DetalleOdontograma.php
-
 │   │   ├── PlanPago.php
-
 │   │   ├── Pago.php
-
 │   │   ├── Compra.php
-
 │   │   ├── DetalleCompra.php
-
 │   │   └── AlmacenInventario.php
-
-│   └── Livewire/
-
-│       ├── Pacientes/           # CRUDs e interfaces interactivas de pacientes
-
-│       ├── Odontograma/         # Componente visual interactivo de dentición
-
-│       ├── Citas/               # Calendario y agendamiento de citas
-
-│       ├── Pagos/               # Registro de abonos y planes de pago
-
-│       └── Inventario/          # Monitoreo de stock de suministros
-
+│   │
+│   └── Providers/
+│       ├── AppServiceProvider.php
+│       └── OracleServiceProvider.php
+│
 ├── config/
-
-│   └── database.php             # Configuración del driver Oracle (Yajra)
-
+│   ├── database.php                # Configuración de conexión Oracle
+│   ├── app.php
+│   └── livewire.php
+│
 ├── database/
-
 │   ├── migrations/
-
-│   │   └── 2026_06_20_000000_create_lalysdent_schema.php
-
+│   │   ├── 2026_06_20_000000_create_lalysdent_schema.php
+│   │   └── 2026_06_20_000001_create_sessions_table.php
+│   │
 │   └── seeders/
-
 │       ├── DatabaseSeeder.php
-
 │       ├── UsersTableSeeder.php
-
 │       ├── DoctorsTableSeeder.php
-
 │       ├── FoldersTableSeeder.php
-
 │       ├── AsistentesTableSeeder.php
-
 │       ├── TratamientosTableSeeder.php
-
 │       ├── ProveedoresTableSeeder.php
-
 │       ├── SuministrosTableSeeder.php
-
 │       ├── PacientesTableSeeder.php
-
 │       ├── CitasTableSeeder.php
-
 │       ├── OdontogramasTableSeeder.php
-
 │       ├── DetalleOdontogramasTableSeeder.php
-
 │       ├── PlanPagosTableSeeder.php
-
 │       ├── PagosTableSeeder.php
-
 │       ├── ComprasTableSeeder.php
-
 │       ├── DetalleComprasTableSeeder.php
-
 │       └── InventarioTableSeeder.php
-
+│
 ├── resources/
-
-│   ├── views/
-
-│   │   ├── vendor/jetstream/
-
-│   │   ├── layouts/app.blade.php
-
-│   │   ├── navigation-menu.blade.php
-
-│   │   └── livewire/            # Vistas reactivas de cada módulo
-
-│   └── css/
-
-│       └── app.css              # Directivas de Tailwind CSS
-
-└── .env                         # Variables de entorno
+│   ├── css/
+│   │   └── app.css                 # Directivas de Tailwind CSS
+│   ├── js/
+│   │   └── app.js                  # JavaScript para Livewire
+│   └── views/
+│       ├── vendor/
+│       │   └── jetstream/          # Vistas de autenticación
+│       ├── layouts/
+│       │   ├── app.blade.php       # Layout principal
+│       │   └── navigation-menu.blade.php
+│       ├── dashboard.blade.php
+│       └── livewire/               # Vistas reactivas
+│
+├── routes/
+│   ├── web.php                     # Rutas principales
+│   ├── api.php
+│   └── console.php
+│
+├── .env                            # Variables de entorno
+├── composer.json                   # Dependencias PHP
+├── package.json                    # Dependencias Node.js
+├── tailwind.config.js              # Configuración de Tailwind
+├── vite.config.js                  # Configuración de Vite
+└── README.md
+```
 
 ---
 
 ## 🗄️ Módulos del Sistema
 
-| Módulo | Tablas Involucradas |
-|---|---|
-| Organizativo | `USERS`, `DOCTOR`, `ASISTENTE`, `FOLDER`, `TRATAMIENTO` |
-| Clínico | `PACIENTE`, `CITA`, `ODONTOGRAMA`, `DETALLE_ODONTOGRAMA` |
-| Financiero | `PLAN_PAGO`, `PAGO` |
-| Logístico | `PROVEEDOR`, `SUMINISTRO`, `COMPRA`, `DETALLE_COMPRA`, `ALMACEN_INVENTARIO` |
+### Módulo Organizativo
+Gestiona la estructura administrativa y los catálogos base del sistema.
+
+| Módulo | Tablas Involucradas | Funcionalidad |
+|--------|---------------------|---------------|
+| Usuarios | `USERS` | Autenticación y gestión de accesos |
+| Doctores | `DOCTOR` | Perfil profesional y especialidades |
+| Asistentes | `ASISTENTE` | Gestión del personal administrativo |
+| Folders | `FOLDER` | Clasificación documental clínica |
+| Tratamientos | `TRATAMIENTO` | Catálogo de servicios odontológicos |
+
+### Módulo Clínico
+Núcleo del sistema para la gestión de pacientes y su historial.
+
+| Módulo | Tablas Involucradas | Funcionalidad |
+|--------|---------------------|---------------|
+| Pacientes | `PACIENTE` | Gestión de datos demográficos y clínicos |
+| Citas | `CITA` | Agendamiento y control de consultas |
+| Odontograma | `ODONTOGRAMA`, `DETALLE_ODONTOGRAMA` | Registro visual de diagnóstico dental |
+| Historial | `VW_HISTORIAL_CLINICO` | Vista consolidada del historial clínico |
+
+### Módulo Financiero
+Control de pagos, planes y transacciones.
+
+| Módulo | Tablas Involucradas | Funcionalidad |
+|--------|---------------------|---------------|
+| Planes de Pago | `PLAN_PAGO` | Gestión de planes de financiamiento |
+| Pagos | `PAGO` | Registro de abonos y transacciones |
+| Facturación | `PAGO.nro_comprobante` | Seguimiento de comprobantes fiscales |
+
+### Módulo Logístico
+Gestión de inventarios, proveedores y compras.
+
+| Módulo | Tablas Involucradas | Funcionalidad |
+|--------|---------------------|---------------|
+| Proveedores | `PROVEEDOR` | Gestión de proveedores y contactos |
+| Suministros | `SUMINISTRO` | Catálogo de insumos y materiales |
+| Compras | `COMPRA`, `DETALLE_COMPRA` | Registro de adquisiciones |
+| Inventario | `ALMACEN_INVENTARIO` | Control de stock en tiempo real |
 
 ---
 
-## 🗃️ Base de Datos — Oracle 19c (DDL Completo)
+## 🗃️ Base de Datos — Oracle 19c
+![Diagrama de Base de Datos - LALYSDENT](lalysdent/docs/capturas/diagrama_base_datos.png "Modelo de Datos Relacional")
 
-### Script de despliegue
+*Figura 1: Diagrama de entidad-relación (ER) de la base de datos Oracle 19c del sistema LALYSDENT*
+
+**Descripción del diagrama:**
+- **Módulo Organizativo:** Tablas `USERS`, `DOCTOR`, `ASISTENTE`, `FOLDER`, `TRATAMIENTO`
+- **Módulo Clínico:** Tablas `PACIENTE`, `CITA`, `ODONTOGRAMA`, `DETALLE_ODONTOGRAMA`
+- **Módulo Financiero:** Tablas `PLAN_PAGO`, `PAGO`
+- **Módulo Logístico:** Tablas `PROVEEDOR`, `SUMINISTRO`, `COMPRA`, `DETALLE_COMPRA`, `ALMACEN_INVENTARIO`
+
+
+### Script de Despliegue Completo (DDL + PL/SQL)
 
 ```sql
 -- ========================================================================
@@ -438,29 +478,66 @@ END;
 
 ---
 
-## ⚙️ Configuración de la Conexión Oracle con Laravel
+## ⚙️ Configuración del Entorno de Servidor (XAMPP + PHP + Oracle)
 
-### 1. Oracle Instant Client 19
+Para que Laravel pueda interactuar con Oracle 19c en un ambiente Windows, utilizaremos XAMPP para gestionar la instancia PHP del servidor Apache. Sigue detalladamente estos pasos:
 
-Descarga y descomprime el Instant Client en `C:\Oracle\instantclient_19`. Agrega esa ruta a la variable de entorno **PATH** del sistema Windows.
-C:\Oracle\instantclient_19   ←   agregar al PATH del sistema
+### 1. Descarga e Instalación de Prerrequisitos
 
-### 2. Activar extensiones PHP
+1. **Instala XAMPP** en su ruta por defecto (`C:\xampp`) garantizando que su versión de PHP sea **8.2 o superior**.
+2. **Descarga Oracle Instant Client 19 (x64)** (Basic Package) desde [Oracle Instant Client Downloads](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
+3. **Descomprime** el Instant Client en la ruta `C:\Oracle\instantclient_19`
+4. **Paso Crítico:** Agrega `C:\Oracle\instantclient_19` a la variable de entorno **PATH** de tu sistema de Windows. (Si no haces esto, PHP fallará al buscar los binarios de Oracle).
 
-En tu `php.ini` activo, descomenta o agrega:
+### 2. Modificación del archivo php.ini en XAMPP
+
+Para indicarle a PHP que habilite las extensiones de conexión hacia Oracle, realiza lo siguiente:
+
+1. **Abre** el Panel de Control de XAMPP
+2. En la fila correspondiente a Apache, haz clic en el botón **Config** y selecciona **PHP (php.ini)**
+3. **Busca** la sección de extensiones dinámicas (Dynamic Extensions)
+4. **Descomenta** o añade directamente las siguientes líneas:
 
 ```ini
+; Habilitar extensiones para Oracle
 extension=oci8_19
 extension=pdo_oci
 ```
 
-### 3. Instalar el paquete Yajra para Oracle
+5. **Guarda** los cambios efectuados (Ctrl + G o Archivo > Guardar) y cierra el editor
+
+### 3. Aplicar los Cambios (Reinicio de Servidores)
+
+Las modificaciones en el archivo php.ini no se ejecutan dinámicamente; requieren un ciclo completo de reinicio del servicio de Apache:
+
+1. **Ve** al Panel de Control de XAMPP
+2. Si el servicio de Apache se encuentra corriendo, haz clic en el botón **Stop**
+3. **Espera** a que el indicador visual cambie de color verde a gris
+4. **Presiona** el botón **Start** en la fila de Apache para encender nuevamente el servidor web
+
+💡 **Verificación:** Puedes cerciorarte de que la extensión está corriendo correctamente ejecutando:
+
+```bash
+php -m
+```
+
+En el listado desplegado deberán aparecer los módulos `oci8` y `PDO_OCI`.
+
+---
+
+## ⚙️ Configuración de Conexión en Laravel
+
+### 1. Instalar el paquete Yajra para Oracle
+
+Ejecuta el siguiente comando en la raíz del proyecto:
 
 ```bash
 composer require yajra/laravel-oci8:^11.0
 ```
 
-### 4. Configurar el archivo `.env`
+### 2. Configurar el archivo .env
+
+Edita las variables de entorno de tu archivo local con los parámetros de conexión de tu Oracle 19c:
 
 ```env
 DB_CONNECTION=oracle
@@ -472,7 +549,9 @@ DB_USERNAME=tu_usuario_oracle
 DB_PASSWORD=tu_password_seguro
 ```
 
-### 5. Configurar `config/database.php`
+### 3. Configurar config/database.php
+
+Asegúrate de que el bloque `oracle` esté definido dentro del array de conexiones de base de datos (`connections`):
 
 ```php
 'oracle' => [
@@ -493,9 +572,9 @@ DB_PASSWORD=tu_password_seguro
 
 ---
 
-## 🚀 Instalación y Despliegue
+## 🚀 Guía de Instalación y Despliegue
 
-### 1. Clonar el repositorio e instalar dependencias
+### 1. Clonar el Repositorio e Instalar Dependencias
 
 ```bash
 git clone https://github.com/tu-usuario/lalysdent.git
@@ -504,30 +583,28 @@ composer install
 npm install
 ```
 
-### 2. Configurar variables de entorno
+### 2. Configurar Llaves y Variables Criptográficas
 
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-> Edita el `.env` con tus credenciales de Oracle antes de continuar.
-
-### 3. Compilar assets del frontend (Tailwind CSS)
+### 3. Compilar Assets del Frontend (Tailwind CSS)
 
 ```bash
 npm run build
 ```
 
-### 4. Poblar la base de datos con Seeders
+### 4. Poblar la Base de Datos con Seeders
 
-Los seeders están ordenados jerárquicamente para respetar las restricciones de llaves foráneas de Oracle. Ejecuta todos en secuencia:
+Los seeders están ordenados jerárquicamente para respetar las restricciones de llaves foráneas y la integridad referencial de Oracle. Ejecuta todo en un lote secuencial:
 
 ```bash
 php artisan db:seed
 ```
 
-O individualmente si necesitas poblar un módulo específico:
+Si requieres poblar un modelo o módulo de manera individual, puedes invocar las clases de manera específica:
 
 ```bash
 php artisan db:seed --class=UsersTableSeeder
@@ -548,38 +625,122 @@ php artisan db:seed --class=DetalleComprasTableSeeder
 php artisan db:seed --class=InventarioTableSeeder
 ```
 
-### 5. Levantar el servidor de desarrollo
+### 5. Levantar el Servidor de Desarrollo
 
 ```bash
 php artisan serve
 ```
 
-Accede al sistema en: **http://127.0.0.1:8000**
+Accede al panel local mediante la dirección: **http://127.0.0.1:8000**
+
+### Credenciales de Acceso (Default Seeders)
+
+| Usuario | Email | Contraseña |
+|---------|-------|------------|
+| Administrador | admin@lalysdent.com | password |
+| Doctor | doctor@lalysdent.com | password |
+| Asistente | asistente@lalysdent.com | password |
 
 ---
 
 ## 👥 Autenticación y Componentes Reactivos
 
-**Laravel Jetstream** gestiona la autenticación, sesiones de usuario y roles de acceso. Cada doctor queda vinculado a un usuario del sistema mediante la clave foránea `user_id` en la tabla `DOCTOR`.
+### Laravel Jetstream
 
-**Laravel Livewire** potencia las interfaces complejas del sistema — como el llenado dinámico del odontograma por pieza y cara dental, o la gestión de stock en tiempo real — sin recargar la página, manteniendo sincronía completa con el motor Oracle en el servidor.
+Laravel Jetstream gestiona de forma nativa los esquemas de autenticación, sesiones seguras de usuario y control de accesos. Cada doctor se encuentra vinculado estrictamente a un perfil mediante la restricción de integridad `user_id` de la tabla `DOCTOR`.
+
+### Laravel Livewire
+
+Laravel Livewire potencia y da dinamismo a las interfaces reactivas complejas de la aplicación:
+
+| Componente | Funcionalidad |
+|------------|---------------|
+| **Pacientes** | CRUD completo con búsqueda en tiempo real |
+| **Odontograma** | Interfaz visual interactiva por pieza y cara dental |
+| **Citas** | Calendario dinámico con drag & drop |
+| **Pagos** | Registro de abonos con actualización automática de saldos |
+| **Inventario** | Monitoreo de stock con alertas de mínimo |
 
 ---
 
 ## 📋 Requisitos del Sistema
 
-| Requisito | Versión mínima |
-|---|---|
-| PHP | 8.2+ |
-| Laravel | 11.x |
-| Oracle Database | 19c |
-| Oracle Instant Client | 19 (x64) |
-| Composer | 2.x |
-| Node.js | 18+ |
-| npm | 9+ |
+| Requisito | Versión Mínima | Nota |
+|-----------|---------------|------|
+| **PHP** | 8.2 o superior | Extensiones: oci8_19, pdo_oci, mbstring, tokenizer, xml, json |
+| **Laravel** | 11.x | - |
+| **Oracle Database** | 19c | Enterprise Edition o Express Edition (XE) |
+| **Oracle Instant Client** | 19 (x64) | Basic o Basic Lite |
+| **Composer** | 2.x | Gestor de dependencias PHP |
+| **Node.js** | 18+ | Para compilación de assets |
+| **npm** | 9+ | Gestor de paquetes Node |
+| **Servidor Web** | Apache 2.4 / Nginx | Con soporte para PHP |
+| **Sistema Operativo** | Windows 10/11, Linux (Ubuntu 20.04+), macOS | 64-bit |
+
+### Extensiones PHP Requeridas
+
+```ini
+extension=fileinfo
+extension=gd
+extension=mbstring
+extension=oci8_19
+extension=pdo_oci
+extension=pdo_mysql
+extension=tokenizer
+extension=xml
+extension=zip
+```
+
+---
+
+## 🔍 Solución de Problemas Comunes
+
+### Error: "OCI8 extension not loaded"
+
+**Solución:**
+1. Verifica que `extension=oci8_19` esté descomentado en `php.ini`
+2. Confirma que `C:\Oracle\instantclient_19` esté en el PATH del sistema
+3. Reinicia Apache completamente
+
+### Error: "ORA-12154: TNS could not resolve"
+
+**Solución:**
+1. Verifica tu archivo `tnsnames.ora` en `C:\Oracle\instantclient_19\network\admin\`
+2. Asegúrate de que `DB_SERVICE_NAME` sea correcto (ej: `XEPDB1`)
+3. Intenta usar conexión directa en lugar de TNS
+
+### Error: "ORA-28000: account is locked"
+
+**Solución:**
+```sql
+-- En SQL*Plus como SYSTEM
+ALTER USER tu_usuario ACCOUNT UNLOCK;
+ALTER USER tu_usuario IDENTIFIED BY nueva_contraseña;
+```
+
+### Error de Conexión: "ORA-12541: TNS:no listener"
+
+**Solución:**
+1. Verifica que el servicio Oracle Listener esté corriendo
+2. En Windows: `Services.msc` → Oracle listener service → Start
+3. En Linux: `lsnrctl start`
+
+### Error al Ejecutar Migraciones
+
+**Solución:**
+```bash
+php artisan config:clear
+php artisan cache:clear
+php artisan config:cache
+php artisan migrate:fresh
+```
 
 ---
 
 ## 📄 Licencia
 
-Este proyecto fue desarrollado con fines académicos.
+Este proyecto fue desarrollado bajo fines académicos y de investigación funcional de sistemas empresariales para la gestión clínica odontológica LALYSDENT.
+
+---
+**© 2026 LALYSDENT - Sistema de Gestión Clínica Odontológica**  
+*Desarrollado con Laravel 11, Oracle 19c y Livewire*

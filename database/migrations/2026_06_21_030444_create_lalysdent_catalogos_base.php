@@ -49,7 +49,8 @@ return new class extends Migration
                 especialidad VARCHAR2(100),
                 telefono VARCHAR2(15),
                 correo VARCHAR2(100) UNIQUE,
-                estado NUMBER(1) DEFAULT 1 NOT NULL
+                estado NUMBER(1) DEFAULT 1 NOT NULL,
+                user_id NUMBER -- <-- COLUMNA AGREGADA AQUÍ
             )
         ");
 

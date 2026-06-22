@@ -22,6 +22,19 @@
         $ciDoc = $doctorActive->ci_dni ?? 'S/N';
         $emailDoc = $userActive->email ?? 'contacto@lalysdent.com';
         
+        // Obtener iniciales del nombre
+        $iniciales = '';
+        if ($nombreDoc && $nombreDoc !== 'Personal Médico') {
+            $nombresArray = explode(' ', $nombreDoc);
+            if (count($nombresArray) >= 2) {
+                $iniciales = strtoupper(substr($nombresArray[0], 0, 1) . substr(end($nombresArray), 0, 1));
+            } else {
+                $iniciales = strtoupper(substr($nombreDoc, 0, 2));
+            }
+        } else {
+            $iniciales = 'PM'; // Personal Médico
+        }
+        
         // Determinar el rol del usuario de manera segura
         $rolUsuario = 'Especialista Médico';
         if ($userActive) {
@@ -71,7 +84,10 @@
 
             <div class="relative">
                 <button @click="profileMenuOpen = !profileMenuOpen" @click.away="profileMenuOpen = false" class="flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-600 focus:ring-white transition">
-                    <img class="h-10 w-10 rounded-full object-cover border-2 border-white/40 shadow-sm" src="https://i.pravatar.cc/150?img=47" alt="Avatar del usuario">
+                    <!-- Avatar con iniciales -->
+                    <div class="h-10 w-10 rounded-full flex items-center justify-center bg-white text-red-600 font-bold text-sm border-2 border-white/40 shadow-sm">
+                        {{ $iniciales }}
+                    </div>
                 </button>
 
                 <div x-show="profileMenuOpen" 
@@ -124,8 +140,10 @@
             
             <div>
                 <div class="flex flex-col items-center pt-6 pb-5 px-4 border-b border-gray-100 bg-gray-50/50">
-                    <img src="https://i.pravatar.cc/150?img=47" alt="Doctora Avatar"
-                         class="h-20 w-20 rounded-full object-cover border-4 border-red-100 shadow-sm mb-2.5">
+                    <!-- Avatar con iniciales en el sidebar -->
+                    <div class="h-20 w-20 rounded-full flex items-center justify-center bg-gradient-to-br from-red-500 to-red-600 text-white font-bold text-2xl border-4 border-red-100 shadow-sm mb-2.5">
+                        {{ $iniciales }}
+                    </div>
                     
                     <p class="font-bold text-gray-800 text-base tracking-tight text-center leading-tight">{{ $nombreDoc }}</p>
                     <p class="text-xs font-semibold text-red-500 mb-1">{{ $especialidadDoc }}</p>

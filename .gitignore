@@ -1,24 +1,39 @@
-# Laravel
+# Dependencias
 /vendor/
 /node_modules/
+
+# Entornos y Credenciales
 .env
-.env.*
+.env.backup
+.env.production
+# IMPORTANTE: Forzamos a Git a NO ignorar el archivo de ejemplo
+!.env.example
+
+# Archivos de caché y logs de Laravel
 /storage/*.key
-/storage/framework/cache/
-/storage/framework/sessions/
-/storage/framework/views/
-/public/storage/
-public/hot
-public/build
+*.log
+.phpunit.result.cache
+
+# Manejo de carpetas Storage
+# (Ignoramos el contenido, pero conservamos la estructura de carpetas)
+/storage/framework/cache/data/*
+!/storage/framework/cache/data/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/logs/*
+!/storage/logs/.gitignore
+
+# Public y compilados de Frontend
+/public/storage
+/public/hot
+/public/build
+
+# Entornos de desarrollo local y SO
 Homestead.json
 Homestead.yaml
-.env.backup
-.phpunit.result.cache
-.DS_Store
-Thumbs.db
-composer.lock
-package-lock.json
-yarn.lock
 /.idea/
 /.vscode/
-*.log
+.DS_Store
+Thumbs.db
