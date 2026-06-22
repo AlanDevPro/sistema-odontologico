@@ -1,0 +1,24 @@
+# Laravel
+/vendor/
+/node_modules/
+.env
+.env.*
+/storage/*.key
+/storage/framework/cache/
+/storage/framework/sessions/
+/storage/framework/views/
+/public/storage/
+public/hot
+public/build
+Homestead.json
+Homestead.yaml
+.env.backup
+.phpunit.result.cache
+.DS_Store
+Thumbs.db
+composer.lock
+package-lock.json
+yarn.lock
+/.idea/
+/.vscode/
+*.log
