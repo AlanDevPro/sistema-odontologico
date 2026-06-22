@@ -1,0 +1,63 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lalysdent-app
+    container_name: lalysdent-app
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - ./:/var/www
+    networks:
+      - lalysdent-network
+    depends_on:
+      oracle-db:
+        # El contenedor 'app' esperará hasta que Oracle pase el healthcheck
+        condition: service_healthy
+
+  webserver:
+    image: nginx:alpine
+    container_name: lalysdent-webserver
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      # SOLUCIÓN DEFINITIVA: Montamos la carpeta del host en la carpeta de Nginx
+      - ./docker-compose/nginx:/etc/nginx/conf.d
+    networks:
+      - lalysdent-network
+    depends_on:
+      - app
+
+  oracle-db:
+    # Cambiar a la versión 21 slim, que es altamente compatible y liviana
+    image: gvenzl/oracle-xe:21-slim
+    container_name: lalysdent-db
+    ports:
+      - "1521:1521"
+    environment:
+      - ORACLE_PASSWORD=alandevpro
+      - APP_USER=alan
+      - APP_USER_PASSWORD=alandevpro
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    networks:
+      - lalysdent-network
+    # --- MEJORA: HEALTHCHECK DE ORACLE ---
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      # Le damos hasta 2 minutos a Oracle para inicializar por primera vez
+      start_period: 120s 
+
+networks:
+  lalysdent-network:
+    driver: bridge
+
+volumes:
+  oracle-data:
+    driver: local

@@ -10,7 +10,8 @@
 - [Arquitectura del Proyecto](#-arquitectura-del-proyecto)
 - [Módulos del Sistema](#-módulos-del-sistema)
 - [Base de Datos - Oracle 19c](#-base-de-datos--oracle-19c)
-- [Configuración del Entorno de Servidor](#-configuración-del-entorno-de-servidor-xampp--php--oracle)
+- [Opción A — Despliegue con Docker (Recomendado)](#-opción-a--despliegue-con-docker-recomendado)
+- [Opción B — Despliegue Manual (XAMPP + PHP + Oracle)](#-opción-b--despliegue-manual-xampp--php--oracle)
 - [Configuración de Conexión en Laravel](#-configuración-de-conexión-en-laravel)
 - [Guía de Instalación y Despliegue](#-guía-de-instalación-y-despliegue)
 - [Autenticación y Componentes Reactivos](#-autenticación-y-componentes-reactivos)
@@ -31,6 +32,7 @@
 | **Base de Datos** | Oracle Database | 19c Enterprise Edition |
 | **Driver de Conexión** | Oracle Instant Client + OCI8 / PDO_OCI | 19 (x64) |
 | **ORM / Paquete Oracle** | Yajra Laravel OCI8 | ^11.0 |
+| **Contenedores** | Docker + Docker Compose | 24.x+ |
 
 ---
 
@@ -53,7 +55,7 @@ lalysdent/
 │   │       └── Pacientes/
 │   │
 │   ├── Models/
-│   │   ├── User.php                # Modelo base de Jetstream
+│   │   ├── User.php
 │   │   ├── Asistente.php
 │   │   ├── Folder.php
 │   │   ├── Tratamiento.php
@@ -75,58 +77,34 @@ lalysdent/
 │       └── OracleServiceProvider.php
 │
 ├── config/
-│   ├── database.php                # Configuración de conexión Oracle
+│   ├── database.php
 │   ├── app.php
 │   └── livewire.php
 │
 ├── database/
 │   ├── migrations/
-│   │   ├── 2026_06_20_000000_create_lalysdent_schema.php
-│   │   └── 2026_06_20_000001_create_sessions_table.php
-│   │
 │   └── seeders/
-│       ├── DatabaseSeeder.php
-│       ├── UsersTableSeeder.php
-│       ├── DoctorsTableSeeder.php
-│       ├── FoldersTableSeeder.php
-│       ├── AsistentesTableSeeder.php
-│       ├── TratamientosTableSeeder.php
-│       ├── ProveedoresTableSeeder.php
-│       ├── SuministrosTableSeeder.php
-│       ├── PacientesTableSeeder.php
-│       ├── CitasTableSeeder.php
-│       ├── OdontogramasTableSeeder.php
-│       ├── DetalleOdontogramasTableSeeder.php
-│       ├── PlanPagosTableSeeder.php
-│       ├── PagosTableSeeder.php
-│       ├── ComprasTableSeeder.php
-│       ├── DetalleComprasTableSeeder.php
-│       └── InventarioTableSeeder.php
 │
 ├── resources/
-│   ├── css/
-│   │   └── app.css                 # Directivas de Tailwind CSS
-│   ├── js/
-│   │   └── app.js                  # JavaScript para Livewire
+│   ├── css/app.css
+│   ├── js/app.js
 │   └── views/
-│       ├── vendor/
-│       │   └── jetstream/          # Vistas de autenticación
-│       ├── layouts/
-│       │   ├── app.blade.php       # Layout principal
-│       │   └── navigation-menu.blade.php
-│       ├── dashboard.blade.php
-│       └── livewire/               # Vistas reactivas
 │
 ├── routes/
-│   ├── web.php                     # Rutas principales
+│   ├── web.php
 │   ├── api.php
 │   └── console.php
 │
-├── .env                            # Variables de entorno
-├── composer.json                   # Dependencias PHP
-├── package.json                    # Dependencias Node.js
-├── tailwind.config.js              # Configuración de Tailwind
-├── vite.config.js                  # Configuración de Vite
+├── docker-compose/            # Configuración de servicios Docker
+├── oracle-instantclient/      # Binarios del Instant Client para la imagen
+├── Dockerfile                 # Imagen PHP + OCI8 para la app
+├── docker-compose.yml         # Orquestación de contenedores
+├── entrypoint.sh              # Script de arranque del contenedor
+├── .env
+├── composer.json
+├── package.json
+├── tailwind.config.js
+├── vite.config.js
 └── README.md
 ```
 
@@ -135,7 +113,6 @@ lalysdent/
 ## 🗄️ Módulos del Sistema
 
 ### Módulo Organizativo
-Gestiona la estructura administrativa y los catálogos base del sistema.
 
 | Módulo | Tablas Involucradas | Funcionalidad |
 |--------|---------------------|---------------|
@@ -146,7 +123,6 @@ Gestiona la estructura administrativa y los catálogos base del sistema.
 | Tratamientos | `TRATAMIENTO` | Catálogo de servicios odontológicos |
 
 ### Módulo Clínico
-Núcleo del sistema para la gestión de pacientes y su historial.
 
 | Módulo | Tablas Involucradas | Funcionalidad |
 |--------|---------------------|---------------|
@@ -156,7 +132,6 @@ Núcleo del sistema para la gestión de pacientes y su historial.
 | Historial | `VW_HISTORIAL_CLINICO` | Vista consolidada del historial clínico |
 
 ### Módulo Financiero
-Control de pagos, planes y transacciones.
 
 | Módulo | Tablas Involucradas | Funcionalidad |
 |--------|---------------------|---------------|
@@ -165,7 +140,6 @@ Control de pagos, planes y transacciones.
 | Facturación | `PAGO.nro_comprobante` | Seguimiento de comprobantes fiscales |
 
 ### Módulo Logístico
-Gestión de inventarios, proveedores y compras.
 
 | Módulo | Tablas Involucradas | Funcionalidad |
 |--------|---------------------|---------------|
@@ -177,6 +151,7 @@ Gestión de inventarios, proveedores y compras.
 ---
 
 ## 🗃️ Base de Datos — Oracle 19c
+
 ![Diagrama de Base de Datos - LALYSDENT](lalysdent/docs/capturas/diagrama_base_datos.png "Modelo de Datos Relacional")
 
 *Figura 1: Diagrama de entidad-relación (ER) de la base de datos Oracle 19c del sistema LALYSDENT*
@@ -186,7 +161,6 @@ Gestión de inventarios, proveedores y compras.
 - **Módulo Clínico:** Tablas `PACIENTE`, `CITA`, `ODONTOGRAMA`, `DETALLE_ODONTOGRAMA`
 - **Módulo Financiero:** Tablas `PLAN_PAGO`, `PAGO`
 - **Módulo Logístico:** Tablas `PROVEEDOR`, `SUMINISTRO`, `COMPRA`, `DETALLE_COMPRA`, `ALMACEN_INVENTARIO`
-
 
 ### Script de Despliegue Completo (DDL + PL/SQL)
 
@@ -478,9 +452,125 @@ END;
 
 ---
 
-## ⚙️ Configuración del Entorno de Servidor (XAMPP + PHP + Oracle)
+## 🐳 Opción A — Despliegue con Docker (Recomendado)
 
-Para que Laravel pueda interactuar con Oracle 19c en un ambiente Windows, utilizaremos XAMPP para gestionar la instancia PHP del servidor Apache. Sigue detalladamente estos pasos:
+> Esta es la forma más rápida y portable de levantar LALYSDENT. Docker se encarga de toda la configuración de PHP, OCI8, Oracle Instant Client y dependencias del proyecto de forma automática, sin necesidad de instalar nada en tu máquina host más allá de Docker Desktop.
+
+### Prerrequisitos
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y corriendo (Windows, macOS o Linux)
+- Git instalado
+
+### Estructura de archivos Docker incluidos
+
+```text
+sistema-odontologico/
+├── Dockerfile              # Imagen PHP 8.2 + OCI8 + extensiones Laravel
+├── docker-compose.yml      # Orquestación: app (Laravel) + Oracle 19c
+├── docker-compose/         # Configuración adicional de servicios
+├── oracle-instantclient/   # Binarios del Oracle Instant Client para la imagen
+└── entrypoint.sh           # Script de arranque: migra y levanta Laravel
+```
+
+### Paso 1 — Clonar el repositorio
+
+```bash
+git clone https://github.com/AlanDevPro/sistema-odontologico.git
+cd sistema-odontologico
+```
+
+### Paso 2 — Configurar variables de entorno
+
+Copia el archivo de ejemplo y ajusta las credenciales de Oracle si es necesario:
+
+```bash
+cp .env.example .env
+```
+
+El `.env.example` ya viene configurado para apuntar al contenedor Oracle definido en `docker-compose.yml`. Normalmente no necesitas cambiar nada para el entorno local.
+
+### Paso 3 — Levantar los contenedores
+
+```bash
+docker compose up -d --build
+```
+
+Este comando construye la imagen de la aplicación e inicia los servicios en segundo plano. La primera vez puede tardar varios minutos mientras descarga la imagen de Oracle y compila los assets.
+
+Puedes verificar que los contenedores estén corriendo con:
+
+```bash
+docker compose ps
+```
+
+Deberías ver algo similar a:
+
+```
+NAME                 STATUS          PORTS
+lalysdent-app        Up (healthy)    0.0.0.0:8000->8000/tcp
+lalysdent-oracle     Up (healthy)    0.0.0.0:1521->1521/tcp
+```
+
+### Paso 4 — Poblar la base de datos con Seeders
+
+Una vez que los contenedores estén en estado `Up (healthy)`, ejecuta los seeders desde dentro del contenedor de la aplicación:
+
+```bash
+docker exec -it lalysdent-app php artisan db:seed
+```
+
+Si necesitas resetear completamente la base de datos y volver a poblarla desde cero:
+
+```bash
+docker exec -it lalysdent-app php artisan migrate:fresh --seed
+```
+
+También puedes ejecutar seeders individuales por módulo:
+
+```bash
+docker exec -it lalysdent-app php artisan db:seed --class=UsersTableSeeder
+docker exec -it lalysdent-app php artisan db:seed --class=DoctorsTableSeeder
+docker exec -it lalysdent-app php artisan db:seed --class=FoldersTableSeeder
+docker exec -it lalysdent-app php artisan db:seed --class=AsistentesTableSeeder
+docker exec -it lalysdent-app php artisan db:seed --class=TratamientosTableSeeder
+docker exec -it lalysdent-app php artisan db:seed --class=ProveedoresTableSeeder
+docker exec -it lalysdent-app php artisan db:seed --class=SuministrosTableSeeder
+docker exec -it lalysdent-app php artisan db:seed --class=PacientesTableSeeder
+docker exec -it lalysdent-app php artisan db:seed --class=CitasTableSeeder
+docker exec -it lalysdent-app php artisan db:seed --class=OdontogramasTableSeeder
+docker exec -it lalysdent-app php artisan db:seed --class=DetalleOdontogramasTableSeeder
+docker exec -it lalysdent-app php artisan db:seed --class=PlanPagosTableSeeder
+docker exec -it lalysdent-app php artisan db:seed --class=PagosTableSeeder
+docker exec -it lalysdent-app php artisan db:seed --class=ComprasTableSeeder
+docker exec -it lalysdent-app php artisan db:seed --class=DetalleComprasTableSeeder
+docker exec -it lalysdent-app php artisan db:seed --class=InventarioTableSeeder
+```
+
+### Paso 5 — Acceder al sistema
+
+Abre tu navegador en:
+
+```
+http://localhost:8000
+```
+
+### Comandos Docker útiles
+
+| Comando | Descripción |
+|---------|-------------|
+| `docker compose up -d` | Iniciar contenedores en segundo plano |
+| `docker compose down` | Detener y eliminar contenedores |
+| `docker compose down -v` | Detener contenedores **y** borrar volúmenes (borra la BD) |
+| `docker compose logs -f app` | Ver logs en tiempo real del contenedor de la app |
+| `docker exec -it lalysdent-app bash` | Abrir terminal dentro del contenedor |
+| `docker exec -it lalysdent-app php artisan tinker` | Abrir Tinker dentro del contenedor |
+| `docker compose build --no-cache` | Reconstruir la imagen desde cero |
+
+---
+
+## ⚙️ Opción B — Despliegue Manual (XAMPP + PHP + Oracle)
+
+> Sigue esta opción si prefieres instalar el entorno directamente en tu máquina Windows sin Docker.
 
 ### 1. Descarga e Instalación de Prerrequisitos
 
@@ -549,6 +639,8 @@ DB_USERNAME=tu_usuario_oracle
 DB_PASSWORD=tu_password_seguro
 ```
 
+> Si usas Docker, el host debe ser el nombre del servicio definido en `docker-compose.yml` (ej: `oracle-db`), no `127.0.0.1`.
+
 ### 3. Configurar config/database.php
 
 Asegúrate de que el bloque `oracle` esté definido dentro del array de conexiones de base de datos (`connections`):
@@ -573,6 +665,8 @@ Asegúrate de que el bloque `oracle` esté definido dentro del array de conexion
 ---
 
 ## 🚀 Guía de Instalación y Despliegue
+
+> Los pasos a continuación aplican al despliegue **sin Docker** (Opción B). Si usas Docker, consulta la [Opción A](#-opción-a--despliegue-con-docker-recomendado) donde los pasos de instalación de dependencias y compilación ocurren automáticamente dentro del contenedor.
 
 ### 1. Clonar el Repositorio e Instalar Dependencias
 
@@ -604,7 +698,7 @@ Los seeders están ordenados jerárquicamente para respetar las restricciones de
 php artisan db:seed
 ```
 
-Si requieres poblar un modelo o módulo de manera individual, puedes invocar las clases de manera específica:
+Si requieres poblar un modelo o módulo de manera individual:
 
 ```bash
 php artisan db:seed --class=UsersTableSeeder
@@ -635,9 +729,17 @@ Accede al panel local mediante la dirección: **http://127.0.0.1:8000**
 
 ### Credenciales de Acceso (Default Seeders)
 
+Las siguientes cuentas son creadas automáticamente por `UsersTableSeeder`. Todas usan la misma contraseña por defecto.
+
 | Usuario | Email | Contraseña |
 |---------|-------|------------|
-| Doctor | c.mendoza@lalysdent.com | password |
+| Dr. Christian Mendoza | c.mendoza@lalysdent.com | password |
+| Dra. Claudia Ibáñez | c.ibanez@lalysdent.com | password |
+| Dr. Alan Nicolas Villarroel | a.villarroel@lalysdent.com | password |
+| Dra. Laly Torrico | l.torrico@lalysdent.com | password |
+| Dr. Sergio Escalante | s.escalante@lalysdent.com | password |
+
+> ⚠️ **Importante:** Cambia estas contraseñas inmediatamente si vas a desplegar el sistema en un entorno de producción.
 
 ---
 
@@ -663,10 +765,21 @@ Laravel Livewire potencia y da dinamismo a las interfaces reactivas complejas de
 
 ## 📋 Requisitos del Sistema
 
+### Con Docker
+
+| Requisito | Versión Mínima |
+|-----------|---------------|
+| **Docker Desktop** | 24.x o superior |
+| **Docker Compose** | v2.x (incluido en Docker Desktop) |
+| **RAM disponible** | 4 GB mínimo (8 GB recomendado para Oracle) |
+| **Espacio en disco** | 10 GB libres (imagen Oracle 19c + assets) |
+
+### Sin Docker (Manual)
+
 | Requisito | Versión Mínima | Nota |
 |-----------|---------------|------|
 | **PHP** | 8.2 o superior | Extensiones: oci8_19, pdo_oci, mbstring, tokenizer, xml, json |
-| **Laravel** | 11.x | - |
+| **Laravel** | 11.x | — |
 | **Oracle Database** | 19c | Enterprise Edition o Express Edition (XE) |
 | **Oracle Instant Client** | 19 (x64) | Basic o Basic Lite |
 | **Composer** | 2.x | Gestor de dependencias PHP |
@@ -733,6 +846,31 @@ php artisan config:cache
 php artisan migrate:fresh
 ```
 
+### Con Docker — Contenedor Oracle tarda en iniciar
+
+El contenedor de Oracle 19c puede tardar entre 2 y 5 minutos en estar listo la primera vez que se levanta. Si el contenedor de la app falla al conectar, espera y luego ejecuta:
+
+```bash
+docker compose restart app
+```
+
+Puedes monitorear cuándo Oracle está listo con:
+
+```bash
+docker compose logs -f oracle-db
+```
+
+Busca el mensaje `DATABASE IS READY TO USE!` en los logs.
+
+### Con Docker — Permisos en storage/
+
+Si Livewire o Laravel muestra errores de permisos en carpetas de almacenamiento:
+
+```bash
+docker exec -it lalysdent-app chmod -R 775 storage bootstrap/cache
+docker exec -it lalysdent-app chown -R www-data:www-data storage bootstrap/cache
+```
+
 ---
 
 ## 📄 Licencia
@@ -740,5 +878,6 @@ php artisan migrate:fresh
 Este proyecto fue desarrollado bajo fines académicos y de investigación funcional de sistemas empresariales para la gestión clínica odontológica LALYSDENT.
 
 ---
+
 **© 2026 LALYSDENT - Sistema de Gestión Clínica Odontológica**  
-*Desarrollado con Laravel 11, Oracle 19c y Livewire*
+*Desarrollado con Laravel 11, Oracle 19c, Livewire y Docker*

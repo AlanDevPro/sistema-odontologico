@@ -1,43 +1,47 @@
-<div class="p-6 md:p-8 bg-slate-50 min-h-screen">
+<div class="min-h-screen p-6 md:p-8"
+     style="background: linear-gradient(135deg, #eff8ff 0%, #f8fafc 50%, #fdf4ff 100%);">
 
     {{-- ============================================================ --}}
     {{-- MENSAJES FLASH --}}
     {{-- ============================================================ --}}
     @if (session('mensaje'))
-        <div class="mb-5 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-700">
-            <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75l2.25 2.25 4.5-4.5m4.5 2.25a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+        <div class="mb-5 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3.5 text-emerald-800 shadow-sm shadow-emerald-100/60">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100">
+                <i class="ti ti-circle-check text-emerald-600" style="font-size:18px"></i>
+            </span>
             <span class="text-sm font-medium">{{ session('mensaje') }}</span>
         </div>
     @endif
 
     @if (session('error'))
-        <div class="mb-5 flex items-center gap-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-rose-700">
-            <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-            </svg>
+        <div class="mb-5 flex items-center gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3.5 text-rose-800 shadow-sm shadow-rose-100/60">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-rose-100">
+                <i class="ti ti-alert-triangle text-rose-500" style="font-size:18px"></i>
+            </span>
             <span class="text-sm font-medium">{{ session('error') }}</span>
         </div>
     @endif
 
     {{-- ============================================================ --}}
-    {{-- ENCABEZADO DE SECCIÓN --}}
+    {{-- ENCABEZADO --}}
     {{-- ============================================================ --}}
-    <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-            <h1 class="text-2xl font-semibold text-slate-800">Gestión de proveedores</h1>
-            <p class="text-sm text-slate-500">Consulta, edita y administra a los proveedores registrados en el sistema.</p>
+    <div class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-center gap-3">
+            <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-100 shadow-sm">
+                <i class="ti ti-truck-delivery text-violet-600" style="font-size:22px"></i>
+            </span>
+            <div>
+                <h1 class="text-2xl font-semibold text-slate-800">Gestión de Proveedores</h1>
+                <p class="text-xs text-slate-400 mt-0.5">Consulta, edita y administra los proveedores registrados.</p>
+            </div>
         </div>
 
         <button
             type="button"
             wire:click="abrirAgregar"
-            class="flex items-center justify-center gap-2 rounded-xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700"
+            class="group flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-sky-500 to-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-300/40 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-sky-300/50 active:translate-y-0"
         >
-            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
+            <i class="ti ti-plus transition-transform duration-200 group-hover:rotate-90" style="font-size:18px"></i>
             Agregar Proveedor
         </button>
     </div>
@@ -45,182 +49,190 @@
     {{-- ============================================================ --}}
     {{-- GRID DE CARDS --}}
     {{-- ============================================================ --}}
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
         @forelse ($this->proveedores as $proveedor)
             <div
                 wire:key="proveedor-{{ $proveedor->id_proveedor }}"
-                class="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                class="flex flex-col overflow-hidden rounded-2xl border border-white bg-white shadow-md shadow-slate-200/50 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-slate-300/50"
             >
                 {{-- Cabecera de la card --}}
-                <div class="mb-3 flex items-start justify-between gap-3">
-                    <div>
-                        <p class="text-base font-semibold leading-snug text-slate-800">{{ $proveedor->razon_social }}</p>
-                        <p class="text-xs text-slate-400">NIT/RUC: {{ $proveedor->nit_ruc }}</p>
+                <div class="flex items-start justify-between gap-3 bg-gradient-to-br from-violet-50 to-blue-50/60 px-5 py-4 border-b border-violet-100/60">
+                    <div class="min-w-0 flex-1">
+                        <p class="truncate text-sm font-semibold leading-snug text-slate-800">{{ $proveedor->razon_social }}</p>
+                        <p class="mt-1 flex items-center gap-1.5 text-xs text-slate-400">
+                            <i class="ti ti-id-badge" style="font-size:12px"></i>
+                            NIT/RUC: <span class="font-mono font-medium text-slate-500">{{ $proveedor->nit_ruc }}</span>
+                        </p>
                     </div>
-                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-sky-50 text-sm font-bold text-sky-600">
-                        {{ mb_substr($proveedor->razon_social, 0, 2) }}
+                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-blue-500 text-sm font-bold text-white shadow-sm shadow-violet-300/40">
+                        {{ mb_strtoupper(mb_substr($proveedor->razon_social, 0, 2)) }}
                     </div>
                 </div>
 
                 {{-- Datos de contacto --}}
-                <div class="mt-2 space-y-1.5 border-t border-slate-100 pt-4 text-sm">
-                    <p class="text-slate-600">
-                        <span class="font-semibold text-slate-700">Contacto:</span>
-                        {{ $proveedor->nombre_contacto ?: '—' }}
-                    </p>
-                    <p class="text-slate-600">
-                        <span class="font-semibold text-slate-700">Celular:</span>
-                        {{ $proveedor->telefono ?: '—' }}
-                    </p>
-                    <p class="text-slate-600">
-                        <span class="font-semibold text-slate-700">Correo:</span>
-                        {{ $proveedor->correo ?: '—' }}
-                    </p>
-                    <p class="text-slate-600">
-                        <span class="font-semibold text-slate-700">Dirección:</span>
-                        {{ $proveedor->direccion ?: '—' }}
-                    </p>
+                <div class="flex-1 space-y-2.5 px-5 py-4">
+                    <div class="flex items-center gap-2.5 text-sm">
+                        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-100">
+                            <i class="ti ti-user text-slate-500" style="font-size:14px"></i>
+                        </span>
+                        <div class="min-w-0">
+                            <p class="text-xs text-slate-400">Contacto</p>
+                            <p class="truncate text-xs font-medium text-slate-700">{{ $proveedor->nombre_contacto ?: '—' }}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2.5 text-sm">
+                        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-50">
+                            <i class="ti ti-device-mobile text-emerald-500" style="font-size:14px"></i>
+                        </span>
+                        <div class="min-w-0">
+                            <p class="text-xs text-slate-400">Celular</p>
+                            <p class="truncate text-xs font-medium text-slate-700">{{ $proveedor->telefono ?: '—' }}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2.5 text-sm">
+                        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-sky-50">
+                            <i class="ti ti-mail text-sky-500" style="font-size:14px"></i>
+                        </span>
+                        <div class="min-w-0">
+                            <p class="text-xs text-slate-400">Correo</p>
+                            <p class="truncate text-xs font-medium text-slate-700">{{ $proveedor->correo ?: '—' }}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2.5 text-sm">
+                        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-50">
+                            <i class="ti ti-map-pin text-amber-500" style="font-size:14px"></i>
+                        </span>
+                        <div class="min-w-0">
+                            <p class="text-xs text-slate-400">Dirección</p>
+                            <p class="truncate text-xs font-medium text-slate-700">{{ $proveedor->direccion ?: '—' }}</p>
+                        </div>
+                    </div>
                 </div>
 
                 {{-- Acciones --}}
-                <div class="mt-4 grid grid-cols-2 gap-2 rounded-xl bg-slate-50 p-2">
+                <div class="grid grid-cols-2 gap-2 border-t border-slate-100 bg-slate-50/70 px-4 py-3">
                     <button
                         type="button"
                         wire:click="abrirEditar({{ $proveedor->id_proveedor }})"
-                        class="flex items-center justify-center gap-2 rounded-lg bg-orange-500 py-2.5 text-sm font-medium text-white transition hover:bg-orange-600"
+                        class="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-orange-400 to-orange-500 py-2.5 text-xs font-semibold text-white shadow-sm shadow-orange-200/60 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:shadow-orange-200/70"
                         title="Modificar proveedor"
                     >
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z" />
-                        </svg>
+                        <i class="ti ti-edit" style="font-size:15px"></i>
                         Editar
                     </button>
                     <button
                         type="button"
                         wire:click="confirmarEliminar({{ $proveedor->id_proveedor }})"
-                        class="flex items-center justify-center gap-2 rounded-lg bg-rose-600 py-2.5 text-sm font-medium text-white transition hover:bg-rose-700"
+                        class="flex items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 py-2.5 text-xs font-semibold text-rose-600 transition-all duration-200 hover:bg-rose-100 hover:border-rose-300 hover:-translate-y-0.5"
                         title="Eliminar proveedor"
                     >
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                        </svg>
+                        <i class="ti ti-trash" style="font-size:15px"></i>
                         Eliminar
                     </button>
                 </div>
             </div>
         @empty
-            <div class="col-span-full flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
-                <p class="text-sm font-medium text-slate-600">Aún no hay proveedores registrados</p>
+            <div class="col-span-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-white/60 px-6 py-16 text-center">
+                <span class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
+                    <i class="ti ti-building-store text-slate-400" style="font-size:32px"></i>
+                </span>
+                <p class="text-sm font-semibold text-slate-600">Aún no hay proveedores registrados</p>
+                <p class="mt-1.5 text-xs text-slate-400">Agrega un proveedor usando el botón de arriba.</p>
             </div>
         @endforelse
     </div>
+
 
     {{-- ============================================================ --}}
     {{-- MODAL: MODIFICAR PROVEEDOR --}}
     {{-- ============================================================ --}}
     @if ($modalEditarVisible)
-        <div
-            class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
-            wire:click.self="cerrarEditar"
-        >
-            <div class="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-xl">
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
+             style="background: rgba(15,23,42,0.6); backdrop-filter: blur(4px);"
+             wire:click.self="cerrarEditar">
+            <div class="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-slate-200/60">
 
-                <div class="relative bg-orange-500 px-6 py-4 text-center">
-                    <h2 class="text-lg font-semibold text-white">
-                        Modificar proveedor
-                    </h2>
-                    <button
-                        type="button"
-                        wire:click="cerrarEditar"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 transition hover:text-white"
-                    >
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                <div class="relative bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4 text-center">
+                    <div class="flex items-center justify-center gap-2.5">
+                        <i class="ti ti-edit text-white/90" style="font-size:20px"></i>
+                        <h2 class="text-lg font-semibold text-white">Modificar Proveedor</h2>
+                    </div>
+                    <button type="button" wire:click="cerrarEditar"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-lg text-white/70 transition hover:bg-white/20 hover:text-white">
+                        <i class="ti ti-x" style="font-size:18px"></i>
                     </button>
                 </div>
 
-                <div class="max-h-[80vh] overflow-y-auto px-6 py-5">
+                <div class="max-h-[80vh] overflow-y-auto px-6 py-6">
                     <form wire:submit.prevent="guardarEditar" class="space-y-5">
 
                         <div>
-                            <label class="mb-1.5 block text-sm font-medium text-slate-700">
-                                Razón social
+                            <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                <i class="ti ti-building" style="font-size:13px"></i> Razón social
                             </label>
-                            <input
-                                type="text"
-                                wire:model="form_razon_social"
-                                class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-800 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
-                            >
-                            @error('form_razon_social') <p class="mt-1 text-xs text-rose-500">{{ $message }}</p> @enderror
+                            <input type="text" wire:model="form_razon_social"
+                                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 transition-all focus:border-sky-400 focus:bg-white focus:outline-none focus:ring-3 focus:ring-sky-100">
+                            @error('form_razon_social') <p class="mt-1.5 flex items-center gap-1 text-xs text-rose-500"><i class="ti ti-alert-circle" style="font-size:12px"></i>{{ $message }}</p> @enderror
                         </div>
 
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
-                                <label class="mb-1.5 block text-sm font-medium text-slate-700">NIT/RUC</label>
-                                <input
-                                    type="text"
-                                    wire:model="form_nit_ruc"
-                                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-800 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
-                                >
-                                @error('form_nit_ruc') <p class="mt-1 text-xs text-rose-500">{{ $message }}</p> @enderror
+                                <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                    <i class="ti ti-id-badge" style="font-size:13px"></i> NIT/RUC
+                                </label>
+                                <input type="text" wire:model="form_nit_ruc"
+                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-mono text-slate-800 transition-all focus:border-sky-400 focus:bg-white focus:outline-none focus:ring-3 focus:ring-sky-100">
+                                @error('form_nit_ruc') <p class="mt-1.5 text-xs text-rose-500">{{ $message }}</p> @enderror
                             </div>
                             <div>
-                                <label class="mb-1.5 block text-sm font-medium text-slate-700">Nombre de contacto</label>
-                                <input
-                                    type="text"
-                                    wire:model="form_nombre_contacto"
-                                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-800 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
-                                >
-                                @error('form_nombre_contacto') <p class="mt-1 text-xs text-rose-500">{{ $message }}</p> @enderror
+                                <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                    <i class="ti ti-user" style="font-size:13px"></i> Nombre de contacto
+                                </label>
+                                <input type="text" wire:model="form_nombre_contacto"
+                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 transition-all focus:border-sky-400 focus:bg-white focus:outline-none focus:ring-3 focus:ring-sky-100">
+                                @error('form_nombre_contacto') <p class="mt-1.5 text-xs text-rose-500">{{ $message }}</p> @enderror
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
-                                <label class="mb-1.5 block text-sm font-medium text-slate-700">Celular</label>
-                                <input
-                                    type="text"
-                                    wire:model="form_telefono"
-                                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-800 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
-                                >
-                                @error('form_telefono') <p class="mt-1 text-xs text-rose-500">{{ $message }}</p> @enderror
+                                <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                    <i class="ti ti-device-mobile" style="font-size:13px"></i> Celular
+                                </label>
+                                <input type="text" wire:model="form_telefono"
+                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 transition-all focus:border-sky-400 focus:bg-white focus:outline-none focus:ring-3 focus:ring-sky-100">
+                                @error('form_telefono') <p class="mt-1.5 text-xs text-rose-500">{{ $message }}</p> @enderror
                             </div>
                             <div>
-                                <label class="mb-1.5 block text-sm font-medium text-slate-700">Correo</label>
-                                <input
-                                    type="email"
-                                    wire:model="form_correo"
-                                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-800 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
-                                >
-                                @error('form_correo') <p class="mt-1 text-xs text-rose-500">{{ $message }}</p> @enderror
+                                <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                    <i class="ti ti-mail" style="font-size:13px"></i> Correo
+                                </label>
+                                <input type="email" wire:model="form_correo"
+                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 transition-all focus:border-sky-400 focus:bg-white focus:outline-none focus:ring-3 focus:ring-sky-100">
+                                @error('form_correo') <p class="mt-1.5 text-xs text-rose-500">{{ $message }}</p> @enderror
                             </div>
                         </div>
 
                         <div>
-                            <label class="mb-1.5 block text-sm font-medium text-slate-700">
-                                Dirección
+                            <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                <i class="ti ti-map-pin" style="font-size:13px"></i> Dirección
                             </label>
-                            <input
-                                type="text"
-                                wire:model="form_direccion"
-                                class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-800 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
-                            >
-                            @error('form_direccion') <p class="mt-1 text-xs text-rose-500">{{ $message }}</p> @enderror
+                            <input type="text" wire:model="form_direccion"
+                                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 transition-all focus:border-sky-400 focus:bg-white focus:outline-none focus:ring-3 focus:ring-sky-100">
+                            @error('form_direccion') <p class="mt-1.5 text-xs text-rose-500">{{ $message }}</p> @enderror
                         </div>
 
                         <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
-                            <button
-                                type="button"
-                                wire:click="cerrarEditar"
-                                class="rounded-lg px-4 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-100"
-                            >
+                            <button type="button" wire:click="cerrarEditar"
+                                class="rounded-xl px-5 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-100">
                                 Cancelar
                             </button>
-                            <button
-                                type="submit"
-                                class="rounded-lg bg-sky-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-700"
-                            >
+                            <button type="submit"
+                                class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-sky-500 to-sky-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-sky-300/40 transition hover:shadow-lg hover:shadow-sky-300/50">
+                                <i class="ti ti-device-floppy" style="font-size:16px"></i>
                                 Guardar cambios
                             </button>
                         </div>
@@ -230,111 +242,101 @@
         </div>
     @endif
 
+
     {{-- ============================================================ --}}
     {{-- MODAL: AGREGAR PROVEEDOR --}}
     {{-- ============================================================ --}}
     @if ($modalAgregarVisible)
-        <div
-            class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
-            wire:click.self="cerrarAgregar"
-        >
-            <div class="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-xl">
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
+             style="background: rgba(15,23,42,0.6); backdrop-filter: blur(4px);"
+             wire:click.self="cerrarAgregar">
+            <div class="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-slate-200/60">
 
-                <div class="relative bg-sky-600 px-6 py-4 text-center">
-                    <h2 class="text-lg font-semibold text-white">Agregar proveedor</h2>
-                    <button
-                        type="button"
-                        wire:click="cerrarAgregar"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 transition hover:text-white"
-                    >
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                <div class="relative bg-gradient-to-r from-sky-500 to-blue-600 px-6 py-4 text-center">
+                    <div class="flex items-center justify-center gap-2.5">
+                        <i class="ti ti-building-store text-white/90" style="font-size:20px"></i>
+                        <h2 class="text-lg font-semibold text-white">Agregar Proveedor</h2>
+                    </div>
+                    <button type="button" wire:click="cerrarAgregar"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-lg text-white/70 transition hover:bg-white/20 hover:text-white">
+                        <i class="ti ti-x" style="font-size:18px"></i>
                     </button>
                 </div>
 
-                <div class="max-h-[80vh] overflow-y-auto px-6 py-5">
+                <div class="max-h-[80vh] overflow-y-auto px-6 py-6">
                     <form wire:submit.prevent="guardarNuevoProveedor" class="space-y-5">
 
                         <div>
-                            <label class="mb-1.5 block text-sm font-medium text-slate-700">
-                                Razón social
+                            <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                <i class="ti ti-building" style="font-size:13px"></i> Razón social
                             </label>
-                            <input
-                                type="text"
-                                wire:model="form_razon_social"
-                                placeholder="Ej. Mundo Dental"
-                                class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-800 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
-                            >
-                            @error('form_razon_social') <p class="mt-1 text-xs text-rose-500">{{ $message }}</p> @enderror
+                            <input type="text" wire:model="form_razon_social" placeholder="Ej. Mundo Dental S.A."
+                                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 transition-all focus:border-sky-400 focus:bg-white focus:outline-none focus:ring-3 focus:ring-sky-100">
+                            @error('form_razon_social') <p class="mt-1.5 flex items-center gap-1 text-xs text-rose-500"><i class="ti ti-alert-circle" style="font-size:12px"></i>{{ $message }}</p> @enderror
                         </div>
 
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
-                                <label class="mb-1.5 block text-sm font-medium text-slate-700">NIT/RUC</label>
-                                <input
-                                    type="text"
-                                    wire:model="form_nit_ruc"
-                                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-800 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
-                                >
-                                @error('form_nit_ruc') <p class="mt-1 text-xs text-rose-500">{{ $message }}</p> @enderror
+                                <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                    <i class="ti ti-id-badge" style="font-size:13px"></i> NIT/RUC
+                                </label>
+                                <input type="text" wire:model="form_nit_ruc" placeholder="Ej. 1234567890"
+                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-mono text-slate-800 transition-all focus:border-sky-400 focus:bg-white focus:outline-none focus:ring-3 focus:ring-sky-100">
+                                @error('form_nit_ruc') <p class="mt-1.5 text-xs text-rose-500">{{ $message }}</p> @enderror
                             </div>
                             <div>
-                                <label class="mb-1.5 block text-sm font-medium text-slate-700">Nombre de contacto</label>
-                                <input
-                                    type="text"
-                                    wire:model="form_nombre_contacto"
-                                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-800 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
-                                >
-                                @error('form_nombre_contacto') <p class="mt-1 text-xs text-rose-500">{{ $message }}</p> @enderror
+                                <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                    <i class="ti ti-user" style="font-size:13px"></i> Nombre de contacto
+                                </label>
+                                <input type="text" wire:model="form_nombre_contacto" placeholder="Ej. Juan Pérez"
+                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 transition-all focus:border-sky-400 focus:bg-white focus:outline-none focus:ring-3 focus:ring-sky-100">
+                                @error('form_nombre_contacto') <p class="mt-1.5 text-xs text-rose-500">{{ $message }}</p> @enderror
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
-                                <label class="mb-1.5 block text-sm font-medium text-slate-700">Celular</label>
-                                <input
-                                    type="text"
-                                    wire:model="form_telefono"
-                                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-800 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
-                                >
-                                @error('form_telefono') <p class="mt-1 text-xs text-rose-500">{{ $message }}</p> @enderror
+                                <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                    <i class="ti ti-device-mobile" style="font-size:13px"></i> Celular
+                                </label>
+                                <input type="text" wire:model="form_telefono" placeholder="Ej. +591 70000000"
+                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 transition-all focus:border-sky-400 focus:bg-white focus:outline-none focus:ring-3 focus:ring-sky-100">
+                                @error('form_telefono') <p class="mt-1.5 text-xs text-rose-500">{{ $message }}</p> @enderror
                             </div>
                             <div>
-                                <label class="mb-1.5 block text-sm font-medium text-slate-700">Correo</label>
-                                <input
-                                    type="email"
-                                    wire:model="form_correo"
-                                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-800 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
-                                >
-                                @error('form_correo') <p class="mt-1 text-xs text-rose-500">{{ $message }}</p> @enderror
+                                <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                    <i class="ti ti-mail" style="font-size:13px"></i> Correo
+                                </label>
+                                <input type="email" wire:model="form_correo" placeholder="Ej. contacto@proveedor.com"
+                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 transition-all focus:border-sky-400 focus:bg-white focus:outline-none focus:ring-3 focus:ring-sky-100">
+                                @error('form_correo') <p class="mt-1.5 text-xs text-rose-500">{{ $message }}</p> @enderror
                             </div>
                         </div>
 
                         <div>
-                            <label class="mb-1.5 block text-sm font-medium text-slate-700">
-                                Dirección
+                            <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                <i class="ti ti-map-pin" style="font-size:13px"></i> Dirección
                             </label>
-                            <input
-                                type="text"
-                                wire:model="form_direccion"
-                                class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-800 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100"
-                            >
-                            @error('form_direccion') <p class="mt-1 text-xs text-rose-500">{{ $message }}</p> @enderror
+                            <input type="text" wire:model="form_direccion" placeholder="Ej. Av. Principal #123, Sucre"
+                                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 transition-all focus:border-sky-400 focus:bg-white focus:outline-none focus:ring-3 focus:ring-sky-100">
+                            @error('form_direccion') <p class="mt-1.5 text-xs text-rose-500">{{ $message }}</p> @enderror
                         </div>
 
-                        <div class="flex items-center justify-end gap-3 pt-2">
-                            <button
-                                type="button"
-                                wire:click="cerrarAgregar"
-                                class="rounded-lg px-4 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-100"
-                            >
+                        <div class="flex items-start gap-2.5 rounded-xl border border-sky-100 bg-sky-50 px-4 py-3">
+                            <i class="ti ti-info-circle mt-0.5 shrink-0 text-sky-500" style="font-size:16px"></i>
+                            <p class="text-xs leading-relaxed text-sky-700">
+                                Una vez registrado, el proveedor estará disponible al crear órdenes de compra de suministros.
+                            </p>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+                            <button type="button" wire:click="cerrarAgregar"
+                                class="rounded-xl px-5 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-100">
                                 Cancelar
                             </button>
-                            <button
-                                type="submit"
-                                class="rounded-lg bg-sky-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-700"
-                            >
+                            <button type="submit"
+                                class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-sky-500 to-sky-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-sky-300/40 transition hover:shadow-lg hover:shadow-sky-300/50">
+                                <i class="ti ti-device-floppy" style="font-size:16px"></i>
                                 Guardar proveedor
                             </button>
                         </div>
@@ -344,25 +346,32 @@
         </div>
     @endif
 
+
     {{-- ============================================================ --}}
     {{-- MODAL: CONFIRMAR ELIMINACIÓN --}}
     {{-- ============================================================ --}}
     @if ($modalConfirmarEliminarVisible)
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4" wire:click.self="cancelarEliminar">
-            <div class="w-full max-w-sm overflow-hidden rounded-2xl bg-white p-6 text-center shadow-xl">
-                <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-rose-50 text-rose-500">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-                    </svg>
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
+             style="background: rgba(15,23,42,0.6); backdrop-filter: blur(4px);"
+             wire:click.self="cancelarEliminar">
+            <div class="w-full max-w-sm overflow-hidden rounded-2xl bg-white p-7 text-center shadow-2xl ring-1 ring-slate-200/60">
+                <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-100">
+                    <i class="ti ti-trash text-rose-500" style="font-size:28px"></i>
                 </div>
                 <h3 class="text-base font-semibold text-slate-800">¿Eliminar este proveedor?</h3>
-                <p class="mt-1 text-sm text-slate-500">Esta acción eliminará al proveedor de forma permanente. Si tiene compras registradas, no podrá eliminarse.</p>
+                <p class="mt-2 text-sm text-slate-500 leading-relaxed">
+                    Esta acción eliminará al proveedor de forma permanente.
+                    Si tiene compras registradas, no podrá eliminarse.
+                </p>
 
-                <div class="mt-5 flex justify-center gap-3">
-                    <button type="button" wire:click="cancelarEliminar" class="rounded-lg px-4 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-100">
+                <div class="mt-6 flex justify-center gap-3">
+                    <button type="button" wire:click="cancelarEliminar"
+                        class="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-500 transition hover:bg-slate-100">
                         Cancelar
                     </button>
-                    <button type="button" wire:click="eliminarProveedor" class="rounded-lg bg-rose-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-700">
+                    <button type="button" wire:click="eliminarProveedor"
+                        class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-rose-500 to-rose-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-rose-300/40 transition hover:shadow-lg hover:shadow-rose-300/50">
+                        <i class="ti ti-trash" style="font-size:15px"></i>
                         Sí, eliminar
                     </button>
                 </div>
