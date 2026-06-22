@@ -577,8 +577,8 @@ Asegúrate de que el bloque `oracle` esté definido dentro del array de conexion
 ### 1. Clonar el Repositorio e Instalar Dependencias
 
 ```bash
-git clone https://github.com/tu-usuario/lalysdent.git
-cd lalysdent
+git clone https://github.com/AlanDevPro/sistema-odontologico.git
+cd sistema-odontologico
 composer install
 npm install
 ```
@@ -637,9 +637,7 @@ Accede al panel local mediante la dirección: **http://127.0.0.1:8000**
 
 | Usuario | Email | Contraseña |
 |---------|-------|------------|
-| Administrador | admin@lalysdent.com | password |
-| Doctor | doctor@lalysdent.com | password |
-| Asistente | asistente@lalysdent.com | password |
+| Doctor | c.mendoza@lalysdent.com | password |
 
 ---
 
